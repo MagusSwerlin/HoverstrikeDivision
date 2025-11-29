@@ -9,6 +9,10 @@ public class CameraRig : MonoBehaviour
     public static CameraRig rig;
     public new static Camera camera;
 
+    [Tooltip("How much to dampen the camera's motion by.")]
+    [Range(0f, 1f)]
+    public float damping;
+
     private Transform height;
     private Transform angle;
     private Transform target;
@@ -23,10 +27,10 @@ public class CameraRig : MonoBehaviour
         camera = angle.GetChild(0).GetComponent<Camera>();
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         if (target)
-            transform.position = target.position;
+            transform.position = Vector3.Lerp(transform.position, target.position, 1 - damping);
     }
 
     /// <summary>
