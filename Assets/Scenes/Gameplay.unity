@@ -620,7 +620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b4496bd4baacb48a5f79ae4caa3dc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraRig
-  damping: 0.9
+  damping: 0
 --- !u!1 &1494103777
 GameObject:
   m_ObjectHideFlags: 0
@@ -734,7 +734,7 @@ GameObject:
   - component: {fileID: 1933720722}
   - component: {fileID: 1933720721}
   - component: {fileID: 1933720720}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -908,7 +908,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8537163116173232740, guid: 7c8846fb23fe80c498801a4cb1d16c60, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.47
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8537163116173232740, guid: 7c8846fb23fe80c498801a4cb1d16c60, type: 3}
       propertyPath: m_LocalPosition.z
