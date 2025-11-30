@@ -13,9 +13,12 @@ public class CameraRig : MonoBehaviour
     [Range(0f, 1f)]
     public float damping;
 
-    private Transform height;
-    private Transform angle;
-    private Transform target;
+    [HideInInspector]
+    public Transform height;
+    [HideInInspector]
+    public Transform angle;
+    [HideInInspector]
+    public Transform target;
 
     private void Awake()
     {
@@ -33,8 +36,8 @@ public class CameraRig : MonoBehaviour
             return;
 
         transform.position = Vector3.Lerp(transform.position, target.position, 1 - damping);
-        transform.rotation = Quaternion.Lerp(transform.rotation,
-            Quaternion.Euler(transform.eulerAngles.x, target.eulerAngles.y, transform.eulerAngles.z), 1 - damping);
+        // transform.rotation = Quaternion.Lerp(transform.rotation,
+        //     Quaternion.Euler(transform.eulerAngles.x, target.eulerAngles.y, transform.eulerAngles.z), 1 - damping);
     }
 
     /// <summary>

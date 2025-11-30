@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [Header("Parameters")]
+    [Tooltip("How sensitive the camera is to mouse input.")]
+    public float aimSensitivity;
     [Tooltip("How far from the ground before a hover point applies force.")]
     public float hoverDistance;
     [Tooltip("How much force is applied for hovering.")]
@@ -34,6 +36,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        //Aiming is handled in Update to ensure the camera's motion is smooth.
+        Aiming();
     }
 
     private void FixedUpdate()
@@ -44,6 +48,17 @@ public class Player : MonoBehaviour
 
     private void Aiming()
     {
+        //Camera aiming using the mouse's horizontal and vertical delta, and slerping the result for smoothness.
+
+        var horizontal = Quaternion.AngleAxis(
+            CameraRig.rig.transform.eulerAngles.y + Mouse.current.delta.x.ReadValue(), Vector3.up);
+        var vertical = Quaternion.AngleAxis(
+            CameraRig.rig.angle.localEulerAngles.x - Mouse.current.delta.y.ReadValue(), Vector3.right);
+
+        CameraRig.rig.transform.rotation =
+            Quaternion.Slerp(CameraRig.rig.transform.rotation, horizontal, Time.deltaTime * aimSensitivity);
+        CameraRig.rig.angle.localRotation =
+            Quaternion.Slerp(CameraRig.rig.angle.localRotation, vertical, Time.deltaTime * aimSensitivity);
     }
 
     private void Movement()
@@ -74,7 +89,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        //Basic, rudamentary movement handling acceleration, strafing and turning.
+        //Controls for handling acceleration and strafing.
 
         if (Keyboard.current.wKey.isPressed)
             physical.body.AddForce(transform.forward * moveForce);
@@ -85,6 +100,13 @@ public class Player : MonoBehaviour
         if (Keyboard.current.dKey.isPressed)
             physical.body.AddForce(transform.right * moveForce);
 
-        physical.body.AddTorque(transform.up * (Mouse.current.delta.x.ReadValue() * turnForce));
+        //Using a signed angle determines if the player is facing left or right of the camera,
+        //and then applies a torque to the player to turn.
+
+        var sign = Vector3.SignedAngle(CameraRig.rig.transform.forward, transform.forward, Vector3.up);
+        var turn = Mathf.Clamp(sign / 180f, -1f, 1f);
+
+        if (Mathf.Abs(turn) > 0.01f)
+            physical.body.AddTorque(transform.up * (turn * turnForce * -1));
     }
 }

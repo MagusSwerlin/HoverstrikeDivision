@@ -621,6 +621,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraRig
   damping: 0
+  height: {fileID: 0}
+  angle: {fileID: 0}
+  target: {fileID: 0}
 --- !u!1 &1494103777
 GameObject:
   m_ObjectHideFlags: 0

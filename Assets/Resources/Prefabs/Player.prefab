@@ -151,10 +151,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6d0512a79a05d149a964c52a7fcc27d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  hoverForce: 30
+  aimSensitivity: 15
   hoverDistance: 3
+  hoverForce: 30
   moveForce: 100
-  turnForce: 10
+  turnForce: 300
   hoverPoints:
   - {fileID: 232715595765819562}
   - {fileID: 4544726758691067085}
