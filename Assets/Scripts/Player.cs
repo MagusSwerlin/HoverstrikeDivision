@@ -73,14 +73,22 @@ public class Player : MonoBehaviour
 
         //Aim each weapon at the camera's pitch.
         foreach (var weapon in weapons)
-            weapon.localRotation = Quaternion.Slerp(weapon.localRotation,
-                Quaternion.Euler(CameraRig.rig.angle.localEulerAngles.x, weapon.localEulerAngles.y,
-                    weapon.localEulerAngles.z), Time.deltaTime * 5);
+            weapon.rotation = Quaternion.Slerp(weapon.rotation,
+                Quaternion.Euler(CameraRig.rig.angle.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z),
+                Time.deltaTime * 5);
 
         //Extra juice by making the hover skates adjust with the player's movement input.
         foreach (var skate in hoverSkates)
             skate.localRotation = Quaternion.Slerp(skate.localRotation,
                 Quaternion.Euler(inputVector.y * -15, 0, inputVector.x * -15), Time.deltaTime * 5);
+
+        //Mouse and weapon aim are shown on the screen with respective cursor icons.
+
+        var bodyAim = CameraRig.camera.WorldToScreenPoint(transform.position + transform.forward * 10f);
+        var weaponAim = CameraRig.camera.WorldToScreenPoint(CameraRig.rig.angle.position + weapons[0].forward * 10f);
+        var aimPos = UIManager.manager.aim.transform.position;
+
+        UIManager.manager.aim.transform.position = new Vector3(bodyAim.x, weaponAim.y, aimPos.z);
     }
 
     private void Movement()
