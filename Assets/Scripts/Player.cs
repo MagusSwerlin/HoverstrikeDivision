@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     public float stabilityForce;
 
     [Header("Components")]
+    public Transform aimDirection;
     public Transform[] hoverPoints;
     public Transform[] hoverSkates;
     public Transform[] weapons;
@@ -34,6 +35,10 @@ public class Player : MonoBehaviour
     {
         //The physical component is retrieved in Start to let it initialize beforehand.
         physical = GetComponent<Physical>();
+
+        //The weapons are parented to the aim direction during runtime, as reparenting inside the model in editor would require unpacking it.
+        foreach (var weapon in weapons)
+            weapon.SetParent(aimDirection);
 
         CameraRig.SetTarget(transform);
 
@@ -72,10 +77,14 @@ public class Player : MonoBehaviour
             Quaternion.Slerp(CameraRig.rig.angle.localRotation, aimVer, Time.deltaTime * aimSensitivity);
 
         //Aim each weapon at the camera's pitch.
-        foreach (var weapon in weapons)
-            weapon.rotation = Quaternion.Slerp(weapon.rotation,
-                Quaternion.Euler(CameraRig.rig.angle.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z),
-                Time.deltaTime * 5);
+        // foreach (var weapon in weapons)
+        //     weapon.rotation = Quaternion.Slerp(weapon.rotation,
+        //         Quaternion.Euler(CameraRig.rig.angle.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z),
+        //         Time.deltaTime * 5);
+
+        aimDirection.rotation = Quaternion.Slerp(aimDirection.rotation,
+            Quaternion.Euler(CameraRig.rig.angle.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z),
+            Time.deltaTime * 5);
 
         //Extra juice by making the hover skates adjust with the player's movement input.
         foreach (var skate in hoverSkates)
@@ -83,12 +92,25 @@ public class Player : MonoBehaviour
                 Quaternion.Euler(inputVector.y * -15, 0, inputVector.x * -15), Time.deltaTime * 5);
 
         //Mouse and weapon aim are shown on the screen with respective cursor icons.
+        //A lock-on effect is shown by sphere-casting to see if any enemies are within the aim radius.
 
-        var bodyAim = CameraRig.camera.WorldToScreenPoint(transform.position + transform.forward * 10f);
-        var weaponAim = CameraRig.camera.WorldToScreenPoint(CameraRig.rig.angle.position + weapons[0].forward * 10f);
-        var aimPos = UIManager.manager.aim.transform.position;
+        if (Physics.SphereCast(aimDirection.position, 5, aimDirection.forward, out var hit, 100f,
+                LayerMask.GetMask("Enemy")))
+        {
+            UIManager.manager.target.gameObject.SetActive(true);
+            UIManager.manager.aim.gameObject.SetActive(false);
+            UIManager.manager.target.transform.position = CameraRig.camera.WorldToScreenPoint(hit.transform.position);
+        }
+        else
+        {
+            UIManager.manager.target.gameObject.SetActive(false);
+            UIManager.manager.aim.gameObject.SetActive(true);
 
-        UIManager.manager.aim.transform.position = new Vector3(bodyAim.x, weaponAim.y, aimPos.z);
+            var aimDir = CameraRig.camera.WorldToScreenPoint(CameraRig.rig.angle.position + aimDirection.forward * 10f);
+
+            UIManager.manager.aim.transform.position =
+                new Vector3(aimDir.x, aimDir.y, UIManager.manager.aim.transform.position.z);
+        }
     }
 
     private void Movement()

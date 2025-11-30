@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Elements")]
     public Transform cursor;
     public Transform aim;
+    public Transform target;
 
     private void Awake()
     {
