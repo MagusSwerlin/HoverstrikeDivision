@@ -1,5 +1,6 @@
 #region
 
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,12 +19,16 @@ public class Player : MonoBehaviour
     public float moveForce;
     [Tooltip("How much force is applied for turning.")]
     public float turnForce;
+    [Tooltip("How much force is applied to correct the player's tilt.")]
+    public float stabilityForce;
 
     [Header("Components")]
     public Transform[] hoverPoints;
+    public Transform[] hoverSkates;
     public Transform[] weapons;
 
     private Physical physical;
+    private Vector2 inputVector;
 
     private void Start()
     {
@@ -49,28 +54,41 @@ public class Player : MonoBehaviour
 
     private void Aiming()
     {
+        //Storing an input vector based on the player's keyboard input.
+        inputVector = new Vector2(
+            Keyboard.current.aKey.isPressed ? -1 : Keyboard.current.dKey.isPressed ? 1 : 0,
+            Keyboard.current.wKey.isPressed ? -1 : Keyboard.current.sKey.isPressed ? 1 : 0);
+
         //Camera aiming using the mouse's horizontal and vertical delta, and slerping the result for smoothness.
 
-        var horizontal = Quaternion.AngleAxis(
+        var aimHor = Quaternion.AngleAxis(
             CameraRig.rig.transform.eulerAngles.y + Mouse.current.delta.x.ReadValue(), Vector3.up);
-        var vertical = Quaternion.AngleAxis(
+        var aimVer = Quaternion.AngleAxis(
             CameraRig.rig.angle.localEulerAngles.x - Mouse.current.delta.y.ReadValue(), Vector3.right);
 
         CameraRig.rig.transform.rotation =
-            Quaternion.Slerp(CameraRig.rig.transform.rotation, horizontal, Time.deltaTime * aimSensitivity);
+            Quaternion.Slerp(CameraRig.rig.transform.rotation, aimHor, Time.deltaTime * aimSensitivity);
         CameraRig.rig.angle.localRotation =
-            Quaternion.Slerp(CameraRig.rig.angle.localRotation, vertical, Time.deltaTime * aimSensitivity);
+            Quaternion.Slerp(CameraRig.rig.angle.localRotation, aimVer, Time.deltaTime * aimSensitivity);
 
+        //Aim each weapon at the camera's pitch.
         foreach (var weapon in weapons)
             weapon.localRotation = Quaternion.Slerp(weapon.localRotation,
                 Quaternion.Euler(CameraRig.rig.angle.localEulerAngles.x, weapon.localEulerAngles.y,
                     weapon.localEulerAngles.z), Time.deltaTime * 5);
+
+        //Extra juice by making the hover skates adjust with the player's movement input.
+        foreach (var skate in hoverSkates)
+            skate.localRotation = Quaternion.Slerp(skate.localRotation,
+                Quaternion.Euler(inputVector.y * -15, 0, inputVector.x * -15), Time.deltaTime * 5);
     }
 
     private void Movement()
     {
         foreach (var hoverPoint in hoverPoints)
         {
+            var index = Array.IndexOf(hoverPoints, hoverPoint);
+
             //For each hover point, a ray is cast downwards to check if the point is within the hover distance to the floor.
             //If it is, then there is an upwards force applied at the point's position.
             //The closer the ray hits the floor, the higher the force is applied to balance out the player.
@@ -86,11 +104,32 @@ public class Player : MonoBehaviour
 
                 var dist = Vector3.Distance(hoverPoint.position, hit.point);
 
+                //Force is modified based on the player's input to give a sense of directional adjustment.
+
+                var forceMod = 1f;
+                const float minForce = 0.8f;
+
+                if (inputVector.y != 0)
+                {
+                    if (inputVector.y > 0)
+                        forceMod = index < 2 ? 1 : minForce;
+                    else
+                        forceMod = index < 2 ? minForce : 1;
+                }
+
+                if (inputVector.x != 0)
+                {
+                    if (inputVector.x > 0)
+                        forceMod = index % 2 == 0 ? 1 : minForce;
+                    else
+                        forceMod = index % 2 == 0 ? minForce : 1;
+                }
+
                 //Draw a debug ray to visualize the force.
                 Debug.DrawRay(hoverPoint.position, Vector3.down * hoverDistance,
                     Color.Lerp(Color.red, Color.green, hoverDistance / dist));
 
-                physical.body.AddForceAtPosition(Vector3.up * (hoverForce * (hoverDistance / dist)),
+                physical.body.AddForceAtPosition(Vector3.up * (hoverForce * (hoverDistance / dist) * forceMod),
                     hoverPoint.position);
             }
         }
@@ -114,5 +153,15 @@ public class Player : MonoBehaviour
 
         if (Mathf.Abs(turn) > 0.01f)
             physical.body.AddTorque(transform.up * (turn * turnForce * -1));
+
+        //Apply a counter-force to prevent the player from tilting too much.
+
+        const float maxTilt = 45;
+
+        if (Vector3.Angle(transform.up, Vector3.up) > maxTilt)
+        {
+            var axis = Vector3.Cross(transform.up, Vector3.up);
+            physical.body.AddTorque(axis * stabilityForce);
+        }
     }
 }

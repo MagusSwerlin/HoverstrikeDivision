@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4544726758691067085}
   m_Layer: 0
-  m_Name: HoverPoint_1
+  m_Name: HoverPoint_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 1400199237781829484}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.503726, y: -0.06, z: 2.6749644}
+  m_LocalPosition: {x: -1.503726, y: 0.48, z: 2.6749644}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -152,15 +152,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   aimSensitivity: 15
-  hoverDistance: 3
+  hoverDistance: 4
   hoverForce: 30
   moveForce: 100
   turnForce: 300
+  stabilityForce: 300
   hoverPoints:
   - {fileID: 232715595765819562}
-  - {fileID: 4544726758691067085}
   - {fileID: 2002309743270462501}
+  - {fileID: 4544726758691067085}
   - {fileID: 3960178267003099761}
+  hoverSkates:
+  - {fileID: 1835959696195056528}
+  - {fileID: 2684939554334164087}
   weapons:
   - {fileID: 2673008534997997068}
   - {fileID: 2601683963797706733}
@@ -174,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2002309743270462501}
   m_Layer: 0
-  m_Name: HoverPoint_2
+  m_Name: HoverPoint_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -189,7 +193,7 @@ Transform:
   m_GameObject: {fileID: 2650943296595660268}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.503726, y: -0.059999943, z: 2.6749644}
+  m_LocalPosition: {x: 1.503726, y: 0.48000002, z: 2.6749644}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -257,8 +261,8 @@ Transform:
   m_Children:
   - {fileID: 280457648923276651}
   - {fileID: 232715595765819562}
-  - {fileID: 4544726758691067085}
   - {fileID: 2002309743270462501}
+  - {fileID: 4544726758691067085}
   - {fileID: 3960178267003099761}
   m_Father: {fileID: 8537163116173232740}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -354,6 +358,11 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5062063831115602093, guid: dc6c19edc9d09e14788b867966dc03ce, type: 3}
+--- !u!4 &1835959696195056528 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2095432073325207824, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
+  m_PrefabInstance: {fileID: 319434256640217728}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2601683963797706733 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2339006497383482733, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
@@ -362,5 +371,10 @@ Transform:
 --- !u!4 &2673008534997997068 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6812058537317563252, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
+  m_PrefabInstance: {fileID: 319434256640217728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2684939554334164087 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2390296012269442807, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
   m_PrefabInstance: {fileID: 319434256640217728}
   m_PrefabAsset: {fileID: 0}
