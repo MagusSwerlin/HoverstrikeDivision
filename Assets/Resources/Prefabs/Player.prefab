@@ -161,6 +161,9 @@ MonoBehaviour:
   - {fileID: 4544726758691067085}
   - {fileID: 2002309743270462501}
   - {fileID: 3960178267003099761}
+  weapons:
+  - {fileID: 2673008534997997068}
+  - {fileID: 2601683963797706733}
 --- !u!1 &2650943296595660268
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,7 +320,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2915775122040103996}
+      addedObject: {fileID: 5149029432438554066}
   m_SourcePrefab: {fileID: 100100000, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
 --- !u!4 &280457648923276651 stripped
 Transform:
@@ -329,7 +332,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
   m_PrefabInstance: {fileID: 319434256640217728}
   m_PrefabAsset: {fileID: 0}
---- !u!64 &2915775122040103996
+--- !u!64 &5149029432438554066
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -351,3 +354,13 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5062063831115602093, guid: dc6c19edc9d09e14788b867966dc03ce, type: 3}
+--- !u!4 &2601683963797706733 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2339006497383482733, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
+  m_PrefabInstance: {fileID: 319434256640217728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2673008534997997068 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6812058537317563252, guid: 53072afbe2e4ef340b6f4d5f37c2fea5, type: 3}
+  m_PrefabInstance: {fileID: 319434256640217728}
+  m_PrefabAsset: {fileID: 0}

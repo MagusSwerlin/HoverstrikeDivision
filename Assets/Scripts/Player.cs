@@ -19,8 +19,9 @@ public class Player : MonoBehaviour
     [Tooltip("How much force is applied for turning.")]
     public float turnForce;
 
-    [Space]
+    [Header("Components")]
     public Transform[] hoverPoints;
+    public Transform[] weapons;
 
     private Physical physical;
 
@@ -59,6 +60,11 @@ public class Player : MonoBehaviour
             Quaternion.Slerp(CameraRig.rig.transform.rotation, horizontal, Time.deltaTime * aimSensitivity);
         CameraRig.rig.angle.localRotation =
             Quaternion.Slerp(CameraRig.rig.angle.localRotation, vertical, Time.deltaTime * aimSensitivity);
+
+        foreach (var weapon in weapons)
+            weapon.localRotation = Quaternion.Slerp(weapon.localRotation,
+                Quaternion.Euler(CameraRig.rig.angle.localEulerAngles.x, weapon.localEulerAngles.y,
+                    weapon.localEulerAngles.z), Time.deltaTime * 5);
     }
 
     private void Movement()
@@ -104,7 +110,7 @@ public class Player : MonoBehaviour
         //and then applies a torque to the player to turn.
 
         var sign = Vector3.SignedAngle(CameraRig.rig.transform.forward, transform.forward, Vector3.up);
-        var turn = Mathf.Clamp(sign / 180f, -1f, 1f);
+        var turn = Mathf.Clamp(sign / 180, -1, 1);
 
         if (Mathf.Abs(turn) > 0.01f)
             physical.body.AddTorque(transform.up * (turn * turnForce * -1));
