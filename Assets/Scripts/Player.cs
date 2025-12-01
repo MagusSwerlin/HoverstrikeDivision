@@ -1,14 +1,16 @@
 #region
 
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 #endregion
 
 public class Player : MonoBehaviour
 {
-    [Header("Parameters")]
+    [Header("Movement")]
     [Tooltip("How sensitive the camera is to mouse input.")]
     public float aimSensitivity;
     [Tooltip("How far from the ground before a hover point applies force.")]
@@ -22,14 +24,33 @@ public class Player : MonoBehaviour
     [Tooltip("How much force is applied to correct the player's tilt.")]
     public float stabilityForce;
 
+    [Header("Weapons")]
+    [Tooltip("The interval between each shot, in seconds.")]
+    public float shootInterval;
+    [Tooltip("The reload time in seconds, once all shots have been depleted.")]
+    public float reloadTime;
+    [Tooltip("The angular spread of the missiles when fired.")]
+    public float missileSpread;
+
     [Header("Components")]
     public Transform aimDirection;
     public Transform[] hoverPoints;
     public Transform[] hoverSkates;
-    public Transform[] weapons;
+    public Weapon[] weapons;
+
+    [Serializable]
+    public class Weapon
+    {
+        public Transform transform;
+        public Transform[] slots;
+    }
 
     private Physical physical;
     private Vector2 inputVector;
+    private Transform target;
+    private bool canShoot;
+    private Tween shootCall;
+    private Tween reloadCall;
 
     private void Start()
     {
@@ -38,7 +59,10 @@ public class Player : MonoBehaviour
 
         //The weapons are parented to the aim direction during runtime, as reparenting inside the model in editor would require unpacking it.
         foreach (var weapon in weapons)
-            weapon.SetParent(aimDirection);
+            weapon.transform.SetParent(aimDirection);
+
+        //Ready the weapons.
+        Reload();
 
         CameraRig.SetTarget(transform);
 
@@ -47,8 +71,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        //Aiming is handled in Update to ensure the camera's motion is smooth.
+        //Aiming and shooting is handled in Update for player input.
         Aiming();
+        Shooting();
     }
 
     private void FixedUpdate()
@@ -76,12 +101,7 @@ public class Player : MonoBehaviour
         CameraRig.rig.angle.localRotation =
             Quaternion.Slerp(CameraRig.rig.angle.localRotation, aimVer, Time.deltaTime * aimSensitivity);
 
-        //Aim each weapon at the camera's pitch.
-        // foreach (var weapon in weapons)
-        //     weapon.rotation = Quaternion.Slerp(weapon.rotation,
-        //         Quaternion.Euler(CameraRig.rig.angle.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z),
-        //         Time.deltaTime * 5);
-
+        //Aim the weapons at the camera's pitch.
         aimDirection.rotation = Quaternion.Slerp(aimDirection.rotation,
             Quaternion.Euler(CameraRig.rig.angle.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z),
             Time.deltaTime * 5);
@@ -97,12 +117,16 @@ public class Player : MonoBehaviour
         if (Physics.SphereCast(aimDirection.position, 5, aimDirection.forward, out var hit, 100f,
                 LayerMask.GetMask("Enemy")))
         {
+            target = hit.transform;
+
             UIManager.manager.target.gameObject.SetActive(true);
             UIManager.manager.aim.gameObject.SetActive(false);
             UIManager.manager.target.transform.position = CameraRig.camera.WorldToScreenPoint(hit.transform.position);
         }
         else
         {
+            target = null;
+
             UIManager.manager.target.gameObject.SetActive(false);
             UIManager.manager.aim.gameObject.SetActive(true);
 
@@ -110,6 +134,86 @@ public class Player : MonoBehaviour
 
             UIManager.manager.aim.transform.position =
                 new Vector3(aimDir.x, aimDir.y, UIManager.manager.aim.transform.position.z);
+        }
+    }
+
+    private void Shooting()
+    {
+        //If the player presses R, manually reload if they aren't already doing so.
+        if (Keyboard.current.rKey.wasPressedThisFrame && !reloadCall.IsActive())
+        {
+            //If the player is already at full ammo, don't reload.
+            if (!Array.Exists(weapons[0].slots, x => x.childCount == 0))
+                return;
+
+            canShoot = false;
+
+            shootCall.Kill();
+            reloadCall = DOVirtual.DelayedCall(reloadTime, Reload);
+        }
+
+        //If there's no target, or the player is not pressing the mouse button, return.
+        if (!target || !Mouse.current.leftButton.isPressed)
+            return;
+
+        //If the weapons are on interval cooldown, return.
+        if (!canShoot)
+            return;
+
+        //Set the shoot interval cooldown.
+        canShoot = false;
+
+        //If there are any missile in the weapons, fire them.
+        if (Array.Exists(weapons[0].slots, x => x.childCount > 0))
+        {
+            foreach (var weapon in weapons)
+            foreach (var slot in weapon.slots)
+                //If there's a missile present in the slot, initialize (fire) it.
+                if (slot.childCount > 0)
+                {
+                    slot.GetChild(0).GetComponent<Projectile>().Init(target);
+                    slot.GetChild(0).SetParent(null);
+
+                    break;
+                }
+
+            //If the last pair of missiles have been fired, reload.
+            if (!Array.Exists(weapons[0].slots, x => x.childCount > 0))
+                reloadCall = DOVirtual.DelayedCall(reloadTime, Reload);
+            else
+                //Otherwise, continue the salvo.
+                shootCall = DOVirtual.DelayedCall(shootInterval, () => { canShoot = true; });
+        }
+        //Otherwise, reload.
+        else
+        {
+            reloadCall = DOVirtual.DelayedCall(reloadTime, Reload);
+        }
+    }
+
+    private void Reload()
+    {
+        canShoot = true;
+
+        //Missiles are instantiated into the slots of the weapons, with a relative scale set so that they aren't huge in size.
+
+        foreach (var weapon in weapons)
+        foreach (var slot in weapon.slots)
+        {
+            //If there's already a missile in the slot, skip it.
+            if (slot.childCount > 0)
+                continue;
+
+            var missile = Instantiate(AssetLoader.GetPrefab("Missile"), slot.position, slot.rotation, slot);
+            missile.transform.localScale *= 0.01f;
+
+            //Add a random offset to the missile's initial launch direction for visual effect.
+
+            if (missileSpread != 0)
+                missile.transform.rotation *= Quaternion.Euler(new Vector3(
+                    Random.Range(-missileSpread, missileSpread),
+                    Random.Range(-missileSpread, missileSpread),
+                    0));
         }
     }
 
@@ -192,6 +296,16 @@ public class Player : MonoBehaviour
         {
             var axis = Vector3.Cross(transform.up, Vector3.up);
             physical.body.AddTorque(axis * stabilityForce);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (var weapon in weapons)
+        foreach (var slot in weapon.slots)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(slot.position, 0.1f);
         }
     }
 }

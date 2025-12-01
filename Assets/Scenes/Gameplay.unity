@@ -412,9 +412,10 @@ GameObject:
   - component: {fileID: 804418652}
   - component: {fileID: 804418651}
   - component: {fileID: 804418650}
+  - component: {fileID: 804418654}
   m_Layer: 8
   m_Name: Dummy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -511,6 +512,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &804418654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 804418649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d5aad6a0ace6149a0d05306d61dfe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  value: 100
+  maxValue: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,9 +766,10 @@ GameObject:
   - component: {fileID: 1624052873}
   - component: {fileID: 1624052872}
   - component: {fileID: 1624052871}
+  - component: {fileID: 1624052875}
   m_Layer: 8
   m_Name: Dummy_2
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -850,6 +866,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1624052875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1624052870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d5aad6a0ace6149a0d05306d61dfe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  value: 100
+  maxValue: 0
 --- !u!1 &1933720719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,9 +1078,10 @@ GameObject:
   - component: {fileID: 2100537187}
   - component: {fileID: 2100537186}
   - component: {fileID: 2100537185}
+  - component: {fileID: 2100537189}
   m_Layer: 8
   m_Name: Dummy_1
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1147,6 +1178,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2100537189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100537184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d5aad6a0ace6149a0d05306d61dfe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  value: 100
+  maxValue: 0
 --- !u!1001 &828097624596374012
 PrefabInstance:
   m_ObjectHideFlags: 0

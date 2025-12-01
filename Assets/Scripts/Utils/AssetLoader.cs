@@ -49,9 +49,20 @@ public class AssetLoader : MonoBehaviour
     /// <param name="prefabName"></param>
     /// <param name="prefab"></param>
     /// <returns></returns>
-    public static bool GetPrefab(string prefabName, out GameObject prefab)
+    public static bool TryGetPrefab(string prefabName, out GameObject prefab)
     {
         return prefabDict.TryGetValue(prefabName, out prefab);
+    }
+
+    /// <summary>
+    ///     Returns the prefab by the name given.
+    /// </summary>
+    /// <param name="prefabName"></param>
+    /// <returns></returns>
+    public static GameObject GetPrefab(string prefabName)
+    {
+        prefabDict.TryGetValue(prefabName, out var prefab);
+        return prefab;
     }
 
     /// <summary>
@@ -60,9 +71,20 @@ public class AssetLoader : MonoBehaviour
     /// <param name="soundName"></param>
     /// <param name="clip"></param>
     /// <returns></returns>
-    public static bool GetSound(string soundName, out AudioClip clip)
+    public static bool TryGetSound(string soundName, out AudioClip clip)
     {
         return soundDict.TryGetValue(soundName, out clip);
+    }
+
+    /// <summary>
+    ///     Returns the sound by the name given.
+    /// </summary>
+    /// <param name="soundName"></param>
+    /// <returns></returns>
+    public static AudioClip GetSound(string soundName)
+    {
+        soundDict.TryGetValue(soundName, out var sound);
+        return sound;
     }
 
     /// <summary>
@@ -71,8 +93,19 @@ public class AssetLoader : MonoBehaviour
     /// <param name="songName"></param>
     /// <param name="clip"></param>
     /// <returns></returns>
-    public static bool GetSong(string songName, out AudioClip clip)
+    public static bool TryGetSong(string songName, out AudioClip clip)
     {
         return musicDict.TryGetValue(songName, out clip);
+    }
+
+    /// <summary>
+    ///     Returns the song by the name given.
+    /// </summary>
+    /// <param name="songName"></param>
+    /// <returns></returns>
+    public static AudioClip GetSong(string songName)
+    {
+        musicDict.TryGetValue(songName, out var song);
+        return song;
     }
 }

@@ -32,12 +32,9 @@ public class CameraRig : MonoBehaviour
 
     private void Update()
     {
-        if (!target)
-            return;
-
-        transform.position = Vector3.Lerp(transform.position, target.position, 1 - damping);
-        // transform.rotation = Quaternion.Lerp(transform.rotation,
-        //     Quaternion.Euler(transform.eulerAngles.x, target.eulerAngles.y, transform.eulerAngles.z), 1 - damping);
+        //If a target has been set, track it.
+        if (target)
+            transform.position = Vector3.Lerp(transform.position, target.position, 1 - damping);
     }
 
     /// <summary>
