@@ -171,8 +171,17 @@ public class Player : MonoBehaviour
                 //If there's a missile present in the slot, initialize (fire) it.
                 if (slot.childCount > 0)
                 {
-                    slot.GetChild(0).GetComponent<Projectile>().Init(target);
-                    slot.GetChild(0).SetParent(null);
+                    var missile = slot.GetChild(0).GetComponent<Projectile>();
+
+                    missile.Init(target);
+                    missile.transform.SetParent(null);
+
+                    //Add a random offset to the missile's initial launch direction for visual effect.
+                    if (missileSpread != 0)
+                        missile.transform.rotation *= Quaternion.Euler(new Vector3(
+                            Random.Range(-missileSpread, missileSpread),
+                            Random.Range(-missileSpread, missileSpread),
+                            0));
 
                     break;
                 }
@@ -206,14 +215,6 @@ public class Player : MonoBehaviour
 
             var missile = Instantiate(AssetLoader.GetPrefab("Missile"), slot.position, slot.rotation, slot);
             missile.transform.localScale *= 0.01f;
-
-            //Add a random offset to the missile's initial launch direction for visual effect.
-
-            if (missileSpread != 0)
-                missile.transform.rotation *= Quaternion.Euler(new Vector3(
-                    Random.Range(-missileSpread, missileSpread),
-                    Random.Range(-missileSpread, missileSpread),
-                    0));
         }
     }
 
